@@ -1936,9 +1936,9 @@ res_cal_QRISK3_Recal = res_cal
 ### Fractional polynomial for linear predictor
 
 ```{r}
-# model1_mfp <- mfp(Surv(time,status)~ fp(LP)+pregnancies+ preeclampsia+small_for_gest+postnatal_dep+gdm+gest_hyp+miscarriage+preterm_birth+endometriosis+irregular_menses+pcos+ Placental_abruption+stillbirth,family = "cox",verbose = T,select = 0.1,data = validation_data1)
+model1_mfp <- mfp(Surv(time,status)~ fp(LP)+pregnancies+ preeclampsia+small_for_gest+postnatal_dep+gdm+gest_hyp+miscarriage+preterm_birth+endometriosis+irregular_menses+pcos+ Placental_abruption+stillbirth,family = "cox",verbose = T,select = 0.1,data = validation_data1)
 # # # # # # # 
-# model1_mfp
+model1_mfp
 
 ```
 
@@ -2313,19 +2313,34 @@ write.csv(estimatesModel1,"estimatesModel1.csv")
 ### Internal validation
 
 ```{r}
-# survmod1=with(validation_data1,Surv(time,status))
-# 
-# cox.mod<-cph(survmod1~LP1+LP2+pregnancies+ preeclampsia+small_for_gest+postnatal_dep+gdm+gest_hyp+miscarriage+preterm_birth+endometriosis+irregular_menses+pcos+ Placental_abruption,x=T,y=T,surv=TRUE,data = validation_data1)
-# 
-# cox.mod
-# 
-# set.seed(3933258)
-# boot_1 <- validate(cox.mod,B=200)
-# boot_1
-# 
-# # Note that this gives Dxy rather than c, however Dxy = 2*(c-0.5), i.e. c=(Dxy/2)+0.5
-# (boot_1[1,1]+1)/2
-# (boot_1[1,5]+1)/2
+source("internal_cv.R")
+
+start_time = Sys.time()
+
+val_data = list(val_data)
+
+int_val = mclapply(val_data,function(x){
+  
+  bootstrap_cv(db = x, 
+                        B = 500,
+                        time = "time1",
+                        status = "status1",
+                        formula_model = "Surv(time1,status1)~LP1+LP2+pregnancies+ preeclampsia+small_for_gest+postnatal_dep+gdm+gest_hyp+miscarriage+preterm_birth+endometriosis+irregular_menses+pcos+ Placental_abruption+stillbirth",
+                        formula_ipcw = "Surv(time1, status1) ~ 1",
+                        pred.time = 9.99)
+},mc.cores = 70)
+
+Sys.time()-start_time
+
+
+int_val1 = int_val[[1]]
+
+int_val1 = data.frame(int_val1)
+
+int_val1 = tibble::rownames_to_column(int_val1,"Optimism-adjusted estimates")
+
+write.csv(int_val1,"Model1_optimism_adjusted.csv")
+
 
 ```
 
@@ -3884,19 +3899,31 @@ write.csv(estimatesModel2a,"estimatesModel2a.csv")
 ### Internal validation
 
 ```{r}
-# survmod1=with(validation_data1,Surv(time,status))
-# 
-# cox.mod<-cph(survmod1~age1+bmi1+sbp1+town+cprd_white+cprd_black+cprd_mixed+cprd_asian+cprd_other+Non_smoker+Ex_smoker+current_smoker+b_AF+b_atypicalantipsy+b_corticosteroids+b_migraine+b_ra+b_renal+b_semi+b_sle+b_treatedhyp+b_type1+b_type2+fh_cvd,x=T,y=T,surv=TRUE,data = validation_data1)
-# 
-# cox.mod
-# 
-# set.seed(3933258)
-# boot_1 <- validate(cox.mod,B=200)
-# boot_1
-# 
-# # Note that this gives Dxy rather than c, however Dxy = 2*(c-0.5), i.e. c=(Dxy/2)+0.5
-# (boot_1[1,1]+1)/2
-# (boot_1[1,5]+1)/2
+start_time = Sys.time()
+
+val_data = list(val_data)
+
+int_val = mclapply(val_data,function(x){
+  
+  bootstrap_cv(db = x, 
+                        B = 500,
+                        time = "time1",
+                        status = "status1",
+                        formula_model = "Surv(time1,status1)~age1+bmi1+sbp1+town+cprd_black+cprd_mixed+cprd_asian+cprd_other+Ex_smoker+current_smoker+b_AF+b_atypicalantipsy+b_corticosteroids+b_migraine+b_ra+b_renal+b_semi+b_sle+b_treatedhyp+b_type1+b_type2+fh_cvd",
+                        formula_ipcw = "Surv(time1, status1) ~ 1",
+                        pred.time = 9.99)
+},mc.cores = 70)
+
+Sys.time()-start_time
+
+
+int_val1 = int_val[[1]]
+
+int_val1 = data.frame(int_val1)
+
+int_val1 = tibble::rownames_to_column(int_val1,"Optimism-adjusted estimates")
+
+write.csv(int_val1,"Model2a_optimism_adjusted.csv")
 
 ```
 
@@ -5281,19 +5308,32 @@ write.csv(estimatesModel2b,"estimatesModel2b.csv")
 ### Internal validation
 
 ```{r}
-# survmod1=with(validation_data1,Surv(time,status))
-# # 
-# cox.mod<-cph(survmod1~age1+bmi1+sbp1+town+pregnancies+cprd_white+cprd_black+cprd_mixed+cprd_asian+cprd_other+Non_smoker+Ex_smoker+current_smoker+b_AF+b_atypicalantipsy+b_corticosteroids+b_migraine+b_ra+b_renal+b_semi+b_sle+b_treatedhyp+b_type1+b_type2+fh_cvd+preeclampsia+small_for_gest+postnatal_dep+gdm+gest_hyp+miscarriage+preterm_birth+endometriosis+irregular_menses+pcos+ Placental_abruption,x=T,y=T,surv=TRUE,data = validation_data1)
-# # 
-# cox.mod
-# # 
-# set.seed(3933258)
-# boot_1 <- validate(cox.mod,B=200)
-# boot_1
-# # 
-# # Note that this gives Dxy rather than c, however Dxy = 2*(c-0.5), i.e. c=(Dxy/2)+0.5
-# (boot_1[1,1]+1)/2
-# (boot_1[1,5]+1)/2
+start_time = Sys.time()
+
+val_data = list(val_data)
+
+int_val = mclapply(val_data,function(x){
+  
+  bootstrap_cv(db = x, 
+                        B = 500,
+                        time = "time1",
+                        status = "status1",
+                        formula_model = "Surv(time1,status1)~age1+bmi1+sbp1+town+pregnancies+cprd_black+cprd_mixed+cprd_asian+cprd_other+Ex_smoker+current_smoker+b_AF+b_atypicalantipsy+b_corticosteroids+b_migraine+b_ra+b_renal+b_semi+b_sle+b_treatedhyp+b_type1+b_type2+fh_cvd+preeclampsia+postnatal_dep+gdm+gest_hyp+miscarriage+endometriosis+pcos+stillbirth",
+                        formula_ipcw = "Surv(time1, status1) ~ 1",
+                        pred.time = 9.99)
+},mc.cores = 70)
+
+Sys.time()-start_time
+
+
+int_val1 = int_val[[1]]
+
+int_val1 = data.frame(int_val1)
+
+int_val1 = tibble::rownames_to_column(int_val1,"Optimism-adjusted estimates")
+
+write.csv(int_val1,"Model2b_optimism_adjusted.csv")
+
 
 ```
 

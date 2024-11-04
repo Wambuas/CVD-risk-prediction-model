@@ -2108,80 +2108,80 @@ TD_AUC = score_vdata$AUC$score$AUC,
 
 ```
 
-<!-- ### LASSO variable selection -->
+### LASSO variable selection
 
 
-<!-- #### Data structure -->
+#### Data structure
 
-<!-- ```{r} -->
-<!-- x <- data.matrix(validation_data1[,c("LP1","LP2", -->
-<!--   "pregnancies", "preeclampsia","small_for_gest","postnatal_dep","gdm","gest_hyp","miscarriage","preterm_birth","endometriosis","irregular_menses","pcos","Placental_abruption","stillbirth")]) -->
+```{r}
+x <- data.matrix(validation_data1[,c("LP1","LP2",
+  "pregnancies", "preeclampsia","small_for_gest","postnatal_dep","gdm","gest_hyp","miscarriage","preterm_birth","endometriosis","irregular_menses","pcos","Placental_abruption","stillbirth")])
 
-<!-- y <- data.matrix(validation_data1[,c("time","status")]) -->
-<!-- ``` -->
-
-
-
-<!-- ```{r} -->
-<!-- penalty  = c(0,0, -->
-<!--              1,1,1,1,1, -->
-<!--              1,1,1,1,1, -->
-<!--              1,1,1) -->
-
-<!-- penalty -->
-
-<!-- ``` -->
+y <- data.matrix(validation_data1[,c("time","status")])
+```
 
 
-<!-- #### Initial fit -->
 
-<!-- ```{r} -->
-<!-- fit <- glmnet(x,y,family = "cox",penalty.factor = penalty,alpha = 1,nlambda = 100,maxit = 1000000) -->
-<!-- ``` -->
+```{r}
+penalty  = c(0,0,
+             1,1,1,1,1,
+             1,1,1,1,1,
+             1,1,1)
 
-<!-- ```{r} -->
-<!-- pdf("lasso_plotM1020624 FinalV2.pdf") -->
+penalty
 
-<!-- p=plot(fit) -->
-
-<!-- print(p) -->
-<!-- dev.off() -->
-<!-- ``` -->
-
-<!-- #### Cross validation to obtain optimum lambda -->
-
-<!-- ```{r} -->
-<!-- cvfit <- cv.glmnet(x,y,family="cox",penalty.factor = penalty,type.measure = "C",maxit = 1000000) -->
-<!-- ``` -->
+```
 
 
-<!-- ```{r} -->
-<!-- pdf("lassoCV_plotM1020624 FinalV2.pdf") -->
+#### Initial fit
 
-<!-- p=plot(cvfit) -->
+```{r}
+fit <- glmnet(x,y,family = "cox",penalty.factor = penalty,alpha = 1,nlambda = 100,maxit = 1000000)
+```
 
-<!-- print(p) -->
-<!-- dev.off() -->
-<!-- ``` -->
+```{r}
+pdf("lasso_plotM1020624 FinalV2.pdf")
 
-<!-- ##### Minimum lambda -->
+p=plot(fit)
 
-<!-- ```{r} -->
-<!-- min=cvfit$lambda.min -->
-<!-- ``` -->
+print(p)
+dev.off()
+```
 
-<!-- ```{r} -->
-<!-- cvfit$lambda.1se -->
-<!-- ``` -->
+#### Cross validation to obtain optimum lambda
+
+```{r}
+cvfit <- cv.glmnet(x,y,family="cox",penalty.factor = penalty,type.measure = "C",maxit = 1000000)
+```
 
 
-<!-- ```{r} -->
-<!-- coef(fit,s=cvfit$lambda.min) -->
-<!-- ``` -->
+```{r}
+pdf("lassoCV_plotM1020624 FinalV2.pdf")
 
-<!-- ```{r} -->
-<!-- coef(fit,s=cvfit$lambda.1se) -->
-<!-- ``` -->
+p=plot(cvfit)
+
+print(p)
+dev.off()
+```
+
+##### Minimum lambda
+
+```{r}
+min=cvfit$lambda.min
+```
+
+```{r}
+cvfit$lambda.1se
+```
+
+
+```{r}
+coef(fit,s=cvfit$lambda.min)
+```
+
+```{r}
+coef(fit,s=cvfit$lambda.1se)
+```
 
 
 ### Final model (same as full model)
@@ -5100,78 +5100,78 @@ validation_data1$sbp1 = I((validation_data1$sbp/100)^2)
 ```
 
 
-<!-- #### LASSO -->
+#### LASSO
 
-<!-- #### Data structure -->
+#### Data structure
 
-<!-- ```{r} -->
-<!-- x <- data.matrix(validation_data1[,c("age1","bmi1","sbp1","town","cprd_black", "cprd_mixed", "cprd_asian", "cprd_other","Ex_smoker","current_smoker","b_AF","b_atypicalantipsy","b_corticosteroids","b_migraine","b_ra","b_renal","b_semi","b_sle","b_treatedhyp","b_type1","b_type2","fh_cvd", -->
+```{r}
+x <- data.matrix(validation_data1[,c("age1","bmi1","sbp1","town","cprd_black", "cprd_mixed", "cprd_asian", "cprd_other","Ex_smoker","current_smoker","b_AF","b_atypicalantipsy","b_corticosteroids","b_migraine","b_ra","b_renal","b_semi","b_sle","b_treatedhyp","b_type1","b_type2","fh_cvd",
 
-<!--                                      "preeclampsia","small_for_gest","postnatal_dep","gdm","gest_hyp","miscarriage","preterm_birth","endometriosis","irregular_menses","pcos","Placental_abruption","stillbirth","pregnancies")]) -->
+                                     "preeclampsia","small_for_gest","postnatal_dep","gdm","gest_hyp","miscarriage","preterm_birth","endometriosis","irregular_menses","pcos","Placental_abruption","stillbirth","pregnancies")])
 
-<!-- y <- data.matrix(validation_data1[,c("time","status")]) -->
+y <- data.matrix(validation_data1[,c("time","status")])
 
-<!-- ``` -->
-
-
-
-<!-- ```{r} -->
-<!-- penalty  = c(0,0,0,0,0, -->
-<!--              0,0,0,0,0, -->
-<!--              0,0,0,0,0, -->
-<!--              0,0,0,0,0, -->
-<!--              0,0, -->
-<!--              1,1,1,1,1,1, -->
-<!--              1,1,1,1,1, -->
-<!--              1,1) -->
-<!-- ``` -->
+```
 
 
-<!-- #### Initial fit -->
 
-<!-- ```{r} -->
-<!-- fit <- glmnet(x,y,family = "cox",penalty.factor = penalty,alpha = 1,nlambda = 100, maxit = 10000000) -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- pdf("lasso_plotM2b020624 FinalV2.pdf") -->
-
-<!-- p=plot(fit) -->
-
-<!-- print(p) -->
-<!-- dev.off() -->
-<!-- ``` -->
-
-<!-- #### Cross validation to obtain optimum lambda -->
-
-<!-- ```{r} -->
-<!-- cvfit <- cv.glmnet(x,y,family="cox",penalty.factor = penalty,type.measure = "C",maxit = 10000000) -->
-<!-- ``` -->
+```{r}
+penalty  = c(0,0,0,0,0,
+             0,0,0,0,0,
+             0,0,0,0,0,
+             0,0,0,0,0,
+             0,0,
+             1,1,1,1,1,1,
+             1,1,1,1,1,
+             1,1)
+```
 
 
-<!-- ```{r} -->
-<!-- pdf("lassoCV_plotM2b020624 FinalV2.pdf") -->
+#### Initial fit
 
-<!-- p=plot(cvfit) -->
+```{r}
+fit <- glmnet(x,y,family = "cox",penalty.factor = penalty,alpha = 1,nlambda = 100, maxit = 10000000)
+```
 
-<!-- print(p) -->
-<!-- dev.off() -->
-<!-- ``` -->
+```{r}
+pdf("lasso_plotM2b020624 FinalV2.pdf")
 
-<!-- ##### Minimum lambda -->
+p=plot(fit)
 
-<!-- ```{r} -->
-<!-- min=cvfit$lambda.min -->
-<!-- ``` -->
+print(p)
+dev.off()
+```
 
-<!-- ```{r} -->
-<!-- cvfit$lambda.1se -->
-<!-- ``` -->
+#### Cross validation to obtain optimum lambda
+
+```{r}
+cvfit <- cv.glmnet(x,y,family="cox",penalty.factor = penalty,type.measure = "C",maxit = 10000000)
+```
 
 
-<!-- ```{r} -->
-<!-- coef(fit,s=cvfit$lambda.min) -->
-<!-- ``` -->
+```{r}
+pdf("lassoCV_plotM2b020624 FinalV2.pdf")
+
+p=plot(cvfit)
+
+print(p)
+dev.off()
+```
+
+##### Minimum lambda
+
+```{r}
+min=cvfit$lambda.min
+```
+
+```{r}
+cvfit$lambda.1se
+```
+
+
+```{r}
+coef(fit,s=cvfit$lambda.min)
+```
 
 
 
